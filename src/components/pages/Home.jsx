@@ -4,7 +4,14 @@ import {
   CardBody,
   CardFooter,
   Typography,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  Avatar,
+  IconButton,
 } from "@material-tailwind/react";
+
 import { motion } from "framer-motion";
 import {
   FaArrowDown,
@@ -35,6 +42,7 @@ import { TbSend, TbApi, TbSeo, TbBrandNextjs } from "react-icons/tb";
 import { MdDevices } from "react-icons/md";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { DialogWithImage } from "./Dialog";
 
 const Home = () => {
   // Animation variants
@@ -66,6 +74,9 @@ const Home = () => {
       title: "E-commerce Platform",
       description:
         "Full-featured online store with cart and payment integration",
+      previewLink: "",
+      Video: "",
+      brief: "",
     },
     {
       imageLink: "sec.png",
@@ -89,14 +100,19 @@ const Home = () => {
       imageLink: "review1.png",
       title: "Restaurant Menu Order System",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1058777",
-      quote:
-        "Loay delivered exceptional work on our restaurant ordering system...",
+      quote: " delivered exceptional work on our restaurant ordering system...",
     },
     {
       imageLink: "review2.png",
       title: "Sales Funnel Optimization",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1050528",
       quote: "The funnel Loay built increased our conversion rate by 35%...",
+    },
+    {
+      imageLink: "review3.png",
+      title: "Civil Engineer portofolio",
+      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1069345",
+      quote: "helped a Civil engineer to show his abillity on the network",
     },
   ];
 
@@ -136,6 +152,11 @@ const Home = () => {
       details: "",
     });
   };
+  const [open, setOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleOpen = () => setOpen((cur) => !cur);
+  const handleIsFavorite = () => setIsFavorite((cur) => !cur);
 
   return (
     <div className="dark:bg-gray-900 bg-gray-50 min-h-screen overflow-x-hidden px-4 sm:px-6">
@@ -510,12 +531,7 @@ const Home = () => {
                   <p className="text-gray-300 text-sm sm:text-base mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
                     {item.description}
                   </p>
-                  <Button
-                    size="sm"
-                    className="w-max bg-primaryCyan-500 hover:bg-primaryCyan-600 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-150"
-                  >
-                    View Project
-                  </Button>
+                  <DialogWithImage />
                 </div>
               </motion.div>
             ))}
@@ -758,10 +774,10 @@ const Home = () => {
                     />
                   </div>
 
-                  <div className="pt-2 sm:pt-4">
+                  <div className="pt-2 sm:pt-4 flex justify-center">
                     <Button
                       type="submit"
-                      className="w-full md:w-auto px-6 sm:px-8 py-2 sm:py-3 bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white font-medium rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base"
+                      className="w-full md:w-auto px-6 sm:px-8 py-2 sm:py-3 justify-center bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white font-medium rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base"
                     >
                       Send Message
                       <TbSend className="text-lg sm:text-xl" />
