@@ -9,7 +9,13 @@ const Error = lazy(() => import("./components/pages/error"));
 
 const UserLayout = () => {
   return (
-    <Suspense fallback={<div className="text-center p-6">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+          <div className="w-20 h-20 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin"></div>
+        </div>
+      }
+    >
       <Header />
       <Routes>
         <Route path="" element={<Home />} />

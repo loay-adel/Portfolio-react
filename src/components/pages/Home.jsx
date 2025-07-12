@@ -13,10 +13,8 @@ import {
   Server,
   GitBranch,
   Database,
-  Cpu,
   Smartphone,
   Monitor,
-  Code2,
   FileCode2,
   FileJson,
   FileText,
@@ -54,7 +52,7 @@ const Home = () => {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
-
+  const [activeItem, setActiveItem] = useState(null);
   // Portfolio data
   const portfolioItems = [
     {
@@ -570,7 +568,7 @@ const Home = () => {
                 <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-primaryCyan-500/30 dark:bg-primaryCyan-400/30 flex items-center justify-center">
                   <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-primaryCyan-500/40 dark:bg-primaryCyan-400/40 flex items-center justify-center">
                     <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-primaryCyan-500 dark:bg-primaryCyan-400 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
-                      LA
+                      Loay A.
                     </div>
                   </div>
                 </div>
@@ -634,7 +632,6 @@ const Home = () => {
               Selected projects I've worked on
             </p>
           </motion.div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {portfolioItems.map((item, index) => (
               <motion.div
@@ -643,21 +640,42 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true, margin: "-50px" }}
-                className="group relative overflow-hidden rounded-lg sm:rounded-xl shadow-lg"
+                className="group relative overflow-hidden rounded-lg sm:rounded-xl shadow-lg cursor-pointer"
+                onClick={() => setActiveItem(index)}
+                onMouseEnter={() => setActiveItem(index)}
+                onMouseLeave={() => setActiveItem(null)}
               >
                 <img
-                  className="w-full h-60 sm:h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-60 sm:h-80 object-cover transition-all duration-500"
+                  style={{
+                    transform:
+                      activeItem === index ? "scale(1.05)" : "scale(1)",
+                    filter:
+                      activeItem === index
+                        ? "brightness(0.7)"
+                        : "brightness(1)",
+                  }}
                   src={item.imageLink}
                   alt={item.description || item.title}
                   loading="lazy"
                   width={800}
                   height={450}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                  <h3 className="text-white text-xl sm:text-2xl font-bold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6 transition-all duration-500"
+                  style={{
+                    opacity: activeItem === index ? 1 : 0,
+                    transform:
+                      activeItem === index
+                        ? "translateY(0)"
+                        : "translateY(100%)",
+                  }}
+                >
+                  <h3 className="text-white text-xl sm:text-2xl font-bold mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-gray-300 text-sm sm:text-base mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
+                  <p className="text-gray-300 text-sm sm:text-base mb-4">
                     {item.description}
                   </p>
                   <DialogWithImage
