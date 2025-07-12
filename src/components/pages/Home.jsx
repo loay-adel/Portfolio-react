@@ -147,10 +147,11 @@ const Home = () => {
   });
 
   const services = [
-    "Web Development",
-    "UI/UX Design",
-    "Mobile App Development",
-    "Consultation",
+    "Custom React Web Development",
+    "Full E-Commerce Store Setup",
+    "Responsive UI/UX Implementation",
+    "Website Performance Optimization",
+    "Freelance Budget & Earnings Consultation",
     "Other",
   ];
 
