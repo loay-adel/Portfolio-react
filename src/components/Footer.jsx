@@ -1,6 +1,4 @@
-import { FaLinkedinIn, FaGithub } from "react-icons/fa";
-import { SiFreelancer } from "react-icons/si";
-import { PiMicrosoftOutlookLogoFill } from "react-icons/pi";
+import { Linkedin, Github, BriefcaseBusiness, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -10,29 +8,36 @@ const Footer = () => {
           <a
             href="https://www.linkedin.com/in/loay-adel/"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-gray-400 hover:text-primaryCyan-400 transition-colors"
+            aria-label="LinkedIn profile"
           >
-            <FaLinkedinIn />
+            <Linkedin size={24} />
           </a>
           <a
             href="https://www.freelancer.com/u/loayadel10"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-gray-400 hover:text-primaryCyan-400 transition-colors"
+            aria-label="Freelancer profile"
           >
-            <SiFreelancer />
+            <BriefcaseBusiness size={24} />
           </a>
           <a
             href="mailto:loay-adel@outlook.com"
             className="text-gray-400 hover:text-primaryCyan-400 transition-colors"
+            aria-label="Email contact"
           >
-            <PiMicrosoftOutlookLogoFill />
+            <Mail size={24} />
           </a>
           <a
-            href="https://github.com/yourusername"
+            href="https://github.com/loay-adel"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-gray-400 hover:text-primaryCyan-400 transition-colors"
+            aria-label="GitHub profile"
           >
-            <FaGithub />
+            <Github size={24} />
           </a>
         </div>
         <p className="text-gray-400">

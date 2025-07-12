@@ -1,48 +1,36 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Typography,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Avatar,
-  IconButton,
-} from "@material-tailwind/react";
-
+import { Button, Card, CardBody, Typography } from "@material-tailwind/react";
 import { motion } from "framer-motion";
-import {
-  FaArrowDown,
-  FaLinkedinIn,
-  FaHtml5,
-  FaCss3,
-  FaJs,
-  FaBootstrap,
-  FaReact,
-  FaGithub,
-  FaNodeJs,
-  FaDocker,
-  FaLaptopCode,
-  FaServer,
-  FaGitAlt,
-} from "react-icons/fa";
-import {
-  SiFreelancer,
-  SiMysql,
-  SiPostman,
-  SiMongodb,
-  SiTailwindcss,
-  SiRedux,
-  SiTypescript,
-} from "react-icons/si";
-import { PiMicrosoftOutlookLogoFill } from "react-icons/pi";
-import { TbSend, TbApi, TbSeo, TbBrandNextjs } from "react-icons/tb";
-import { MdDevices } from "react-icons/md";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { DialogWithImage } from "./Dialog";
+import emailjs from "@emailjs/browser";
+import { Notyf } from "notyf";
+import "notyf/notyf.min.css";
+
+// Import lucide-react icons
+import {
+  ArrowDown,
+  Laptop,
+  Server,
+  GitBranch,
+  Database,
+  Cpu,
+  Smartphone,
+  Monitor,
+  Code2,
+  FileCode2,
+  FileJson,
+  FileText,
+  Atom,
+  Layers,
+  Repeat,
+  Palette,
+  LayoutGrid,
+  Github,
+  Package,
+  Send,
+  Search,
+  ArrowBigUp,
+} from "lucide-react";
 
 const Home = () => {
   // Animation variants
@@ -70,7 +58,35 @@ const Home = () => {
   // Portfolio data
   const portfolioItems = [
     {
-      imageLink: "myfirst.png",
+      imageLink: "Click.webp",
+      title: "Click Cart-Connect ",
+      description:
+        "Full-featured online store with cart and payment integration ",
+      previewLink: "https://final-project-five-ashy.vercel.app/",
+      Video: "Click-Cart Connect.mp4",
+      brief:
+        "A full e-commerce site built for a graduation project with cart, product listing, and admin functionalities. Data handled temporarily with JSON Server before moving to MongoDB.",
+    },
+    {
+      imageLink: "gioco.webp",
+      title: "GIOCO ",
+      description: "Digital Menu for Restaurant ",
+      previewLink: null,
+      Video: "Gioco.mp4",
+      brief:
+        "An interactive digital menu allowing customers to view items and place orders. Switched image upload to use image URLs instead of file uploads.",
+    },
+    {
+      imageLink: "ziad show.webp",
+      title: "Portofolio ",
+      description: "show case for MR ziad ",
+      previewLink: "https://ziadabdullah.com/",
+      Video: "Ziad Abdullah.mp4",
+      brief:
+        "Developed a modern, fast, and fully responsive personal website for showcasing a professional profile. The site includes a smooth animated UI, secure backend hosted on a VPS with SSL, and a CV builder tool that allows users to create and download ATS-friendly resumes directly from the site.",
+    },
+    {
+      imageLink: "myfirst.webp",
       title: "E-commerce Platform",
       description:
         "Full-featured online store with cart and payment integration",
@@ -79,17 +95,17 @@ const Home = () => {
       brief: "",
     },
     {
-      imageLink: "sec.png",
+      imageLink: "sec.webp",
       title: "Dashboard UI",
       description: "Analytics dashboard with interactive charts",
     },
     {
-      imageLink: "thrid.png",
+      imageLink: "thrid.webp",
       title: "Mobile App Design",
       description: "Cross-platform mobile application",
     },
     {
-      imageLink: "fourth.png",
+      imageLink: "fourth.webp",
       title: "Portfolio Website",
       description: "Custom portfolio showcasing creative work",
     },
@@ -97,22 +113,28 @@ const Home = () => {
 
   const testimonials = [
     {
-      imageLink: "review1.png",
+      imageLink: "review1.webp",
       title: "Restaurant Menu Order System",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1058777",
       quote: " delivered exceptional work on our restaurant ordering system...",
     },
     {
-      imageLink: "review2.png",
+      imageLink: "review2.webp",
       title: "Sales Funnel Optimization",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1050528",
       quote: "The funnel Loay built increased our conversion rate by 35%...",
     },
     {
-      imageLink: "review3.png",
+      imageLink: "review3.webp",
       title: "Civil Engineer portofolio",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1069345",
       quote: "helped a Civil engineer to show his abillity on the network",
+    },
+    {
+      imageLink: "review4.webp",
+      title: "clone landing page",
+      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1072699",
+      quote: "cloned a landing page for the client ",
     },
   ];
 
@@ -139,35 +161,61 @@ const Home = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Thank you for your message! I will get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      timeline: "",
-      service: "",
-      details: "",
+  function getFormattedTime() {
+    const now = new Date();
+    return now.toLocaleString("en-US", {
+      dateStyle: "long",
+      timeStyle: "short",
     });
-  };
-  const [open, setOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  }
+  const notyf = new Notyf();
 
-  const handleOpen = () => setOpen((cur) => !cur);
-  const handleIsFavorite = () => setIsFavorite((cur) => !cur);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formattedTime = getFormattedTime();
+
+    const templateParams = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      service: formData.service,
+      timeline: formData.timeline,
+      details: formData.details,
+      time: formattedTime,
+    };
+    console.log(templateParams);
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_Service_ID,
+        import.meta.env.VITE_Template_ID,
+        templateParams,
+        import.meta.env.VITE_Public_KEY
+      );
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        timeline: "",
+        service: "",
+        details: "",
+      });
+      notyf.success("Email sent successfully!");
+    } catch (error) {
+      notyf.error(`Error email didn't send ${error}`);
+    }
+  };
 
   return (
     <div className="dark:bg-gray-900 bg-gray-50 min-h-screen overflow-x-hidden px-4 sm:px-6">
       {/* Hero Section */}
-      <section className="relative w-full  h-[calc(100vh-56px)] sm:h-[calc(100vh-72px)] flex items-center justify-center py-16">
+      <section className="relative w-full min-h-[calc(100vh-56px)] sm:min-h-[calc(100vh-72px)] flex items-center justify-center py-16">
         <div className="max-w-6xl mx-auto text-center px-4">
           <motion.h1
             variants={fadeInUp}
             initial="hidden"
             animate="show"
-            className="text-4xl sm:text-5xl md:text-7xl font-bold dark:text-white text-gray-900 mb-4 sm:mb-6"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold dark:text-white text-gray-900 mb-4 sm:mb-6"
           >
             Hi, I'm{" "}
             <span className="text-primaryCyan-500 dark:text-primaryCyan-400">
@@ -192,21 +240,23 @@ const Home = () => {
             transition={{ delay: 0.4 }}
             className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 sm:mb-16"
           >
-            <Button className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white rounded-lg shadow-lg transition-all hover:shadow-xl">
-              Collaborate With Me
-            </Button>
+            <a href="#contact" aria-label="Navigate to contact section">
+              <Button className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white rounded-lg shadow-lg transition-all hover:shadow-xl">
+                Collaborate With Me
+              </Button>
+            </a>
             <a
-              href="https://drive.google.com/uc?export=download&id=1JagdEKlFAEwmyL1Zn67dGVUaeNx_2zOY"
-              download="Loay_Adel_CV.pdf"
+              href="https://drive.google.com/uc?export=download&id=1zZT8gBF013MZdtym5BlFy8Od_LCltOSW"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Download CV"
             >
               <Button
                 variant="outlined"
                 className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg border-2 dark:border-gray-600 border-gray-300 dark:text-white text-gray-800 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 rounded-lg flex items-center gap-2 transition-all"
               >
                 Download CV
-                <FaArrowDown className="text-lg" />
+                <ArrowDown className="text-lg" aria-hidden="true" />
               </Button>
             </a>
           </motion.div>
@@ -219,8 +269,8 @@ const Home = () => {
             className="flex flex-wrap justify-center gap-4 sm:gap-8"
           >
             {[
-              { value: "5+", label: "Years Experience" },
-              { value: "20+", label: "Projects Completed" },
+              { value: "1+", label: "Years Experience" },
+              { value: "5+", label: "Projects Completed" },
               { value: "100%", label: "Client Satisfaction" },
             ].map((item, index) => (
               <div key={index} className="flex flex-col items-center px-4 py-2">
@@ -243,7 +293,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -258,7 +308,10 @@ const Home = () => {
             {[
               {
                 icon: (
-                  <FaLaptopCode className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <Laptop
+                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
+                    aria-hidden="true"
+                  />
                 ),
                 title: "Frontend Development",
                 description:
@@ -266,7 +319,10 @@ const Home = () => {
               },
               {
                 icon: (
-                  <FaServer className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <Server
+                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
+                    aria-hidden="true"
+                  />
                 ),
                 title: "Backend Development",
                 description:
@@ -274,7 +330,10 @@ const Home = () => {
               },
               {
                 icon: (
-                  <SiMongodb className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <Database
+                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
+                    aria-hidden="true"
+                  />
                 ),
                 title: "Database Solutions",
                 description:
@@ -282,7 +341,10 @@ const Home = () => {
               },
               {
                 icon: (
-                  <TbApi className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <ArrowBigUp
+                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
+                    aria-hidden="true"
+                  />
                 ),
                 title: "API Integration",
                 description:
@@ -290,7 +352,10 @@ const Home = () => {
               },
               {
                 icon: (
-                  <MdDevices className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <div className="flex gap-1">
+                    <Smartphone className="text-xl sm:text-2xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                    <Monitor className="text-xl sm:text-2xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  </div>
                 ),
                 title: "Responsive Design",
                 description:
@@ -298,7 +363,10 @@ const Home = () => {
               },
               {
                 icon: (
-                  <FaGitAlt className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400" />
+                  <GitBranch
+                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
+                    aria-hidden="true"
+                  />
                 ),
                 title: "Version Control",
                 description:
@@ -310,14 +378,16 @@ const Home = () => {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
               >
                 <Card className="h-full dark:bg-gray-700/50 bg-white group hover:shadow-lg transition-shadow">
                   <CardBody className="p-6 sm:p-8">
-                    <div className="mb-4 sm:mb-6">{service.icon}</div>
+                    <div className="mb-4 sm:mb-6" aria-hidden="true">
+                      {service.icon}
+                    </div>
                     <Typography
-                      variant="h5"
-                      className="mb-3 sm:mb-4 dark:text-white text-gray-900"
+                      variant="h3"
+                      className="mb-3 sm:mb-4 dark:text-white text-gray-900 text-lg sm:text-xl"
                     >
                       {service.title}
                     </Typography>
@@ -339,7 +409,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -354,52 +424,100 @@ const Home = () => {
             variants={listVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"
           >
             {[
-              { icon: <FaHtml5 />, name: "HTML5", color: "text-orange-500" },
-              { icon: <FaCss3 />, name: "CSS3", color: "text-blue-500" },
-              { icon: <FaJs />, name: "JavaScript", color: "text-yellow-400" },
               {
-                icon: <SiTypescript />,
+                icon: <FileCode2 aria-hidden="true" />,
+                name: "HTML5",
+                color: "text-orange-500",
+              },
+              {
+                icon: <FileCode2 aria-hidden="true" />,
+                name: "CSS3",
+                color: "text-blue-500",
+              },
+              {
+                icon: <FileJson aria-hidden="true" />,
+                name: "JavaScript",
+                color: "text-yellow-400",
+              },
+              {
+                icon: <FileText aria-hidden="true" />,
                 name: "TypeScript",
                 color: "text-blue-600",
               },
-              { icon: <FaReact />, name: "React", color: "text-cyan-500" },
               {
-                icon: <TbBrandNextjs />,
+                icon: <Atom aria-hidden="true" />,
+                name: "React",
+                color: "text-cyan-500",
+              },
+              {
+                icon: <Layers aria-hidden="true" />,
                 name: "Next.js",
                 color: "text-black dark:text-white",
               },
-              { icon: <SiRedux />, name: "Redux", color: "text-purple-500" },
               {
-                icon: <SiTailwindcss />,
+                icon: <Repeat aria-hidden="true" />,
+                name: "Redux",
+                color: "text-purple-500",
+              },
+              {
+                icon: <Palette aria-hidden="true" />,
                 name: "Tailwind",
                 color: "text-sky-400",
               },
               {
-                icon: <FaBootstrap />,
+                icon: <LayoutGrid aria-hidden="true" />,
                 name: "Bootstrap",
                 color: "text-purple-600",
               },
-              { icon: <FaNodeJs />, name: "Node.js", color: "text-green-600" },
-              { icon: <SiMongodb />, name: "MongoDB", color: "text-green-500" },
-              { icon: <SiMysql />, name: "MySQL", color: "text-blue-400" },
-              { icon: <FaGitAlt />, name: "Git", color: "text-orange-600" },
               {
-                icon: <FaGithub />,
+                icon: <Server aria-hidden="true" />,
+                name: "Node.js",
+                color: "text-green-600",
+              },
+              {
+                icon: <Database aria-hidden="true" />,
+                name: "MongoDB",
+                color: "text-green-500",
+              },
+              {
+                icon: <Database aria-hidden="true" />,
+                name: "MySQL",
+                color: "text-blue-400",
+              },
+              {
+                icon: <GitBranch aria-hidden="true" />,
+                name: "Git",
+                color: "text-orange-600",
+              },
+              {
+                icon: <Github aria-hidden="true" />,
                 name: "GitHub",
                 color: "text-gray-800 dark:text-white",
               },
-              { icon: <FaDocker />, name: "Docker", color: "text-blue-700" },
               {
-                icon: <SiPostman />,
+                icon: <Package aria-hidden="true" />,
+                name: "Docker",
+                color: "text-blue-700",
+              },
+              {
+                icon: <Send aria-hidden="true" />,
                 name: "Postman",
                 color: "text-orange-500",
               },
-              { icon: <TbSeo />, name: "SEO", color: "text-pink-500" },
-              { icon: <TbApi />, name: "REST API", color: "text-indigo-500" },
+              {
+                icon: <Search aria-hidden="true" />,
+                name: "SEO",
+                color: "text-pink-500",
+              },
+              {
+                icon: <ArrowBigUp aria-hidden="true" />,
+                name: "REST API",
+                color: "text-indigo-500",
+              },
             ].map((skill, index) => (
               <motion.div
                 key={index}
@@ -409,6 +527,7 @@ const Home = () => {
               >
                 <div
                   className={`text-4xl sm:text-5xl mb-3 sm:mb-4 ${skill.color}`}
+                  aria-hidden="true"
                 >
                   {skill.icon}
                 </div>
@@ -428,7 +547,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -444,13 +563,13 @@ const Home = () => {
               initial={{ x: -50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               className="flex justify-center w-full md:w-auto"
             >
-              <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full bg-primaryCyan-500/20 dark:bg-primaryCyan-400/20 flex items-center justify-center">
-                <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-full bg-primaryCyan-500/30 dark:bg-primaryCyan-400/30 flex items-center justify-center">
-                  <div className="w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-full bg-primaryCyan-500/40 dark:bg-primaryCyan-400/40 flex items-center justify-center">
-                    <div className="w-24 h-24 sm:w-40 sm:h-40 md:w-56 md:h-56 rounded-full bg-primaryCyan-500 dark:bg-primaryCyan-400 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full bg-primaryCyan-500/20 dark:bg-primaryCyan-400/20 flex items-center justify-center">
+                <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-primaryCyan-500/30 dark:bg-primaryCyan-400/30 flex items-center justify-center">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-primaryCyan-500/40 dark:bg-primaryCyan-400/40 flex items-center justify-center">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-primaryCyan-500 dark:bg-primaryCyan-400 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
                       LA
                     </div>
                   </div>
@@ -462,43 +581,50 @@ const Home = () => {
               initial={{ x: 50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               className="w-full"
             >
-              <Typography className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-4 sm:mb-6 leading-relaxed">
+              <p className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-4 sm:mb-6 leading-relaxed">
                 I'm a passionate web developer with a strong foundation in
                 front-end and back-end technologies. I specialize in creating
                 responsive, user-friendly web applications using modern tools
                 and frameworks like React, Tailwind CSS, Node.js, and MongoDB.
-              </Typography>
-              <Typography className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-4 sm:mb-6 leading-relaxed">
+              </p>
+              <p className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-4 sm:mb-6 leading-relaxed">
                 With a solid background in CSS essentials, UX/UI principles, and
                 TypeScript, I pay close attention to code quality, best
                 practices, and functional documentation to build maintainable
                 and scalable projects.
-              </Typography>
-              <Typography className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-6 sm:mb-8 leading-relaxed">
+              </p>
+              <p className="text-base sm:text-lg dark:text-gray-300 text-gray-700 mb-6 sm:mb-8 leading-relaxed">
                 My goal is to deliver high-quality digital experiences that meet
                 client needs and provide seamless user interactions. When I'm
                 not coding, I'm exploring ways AI can enhance development
                 workflows.
-              </Typography>
-              <Button className="bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg transition-all">
-                Contact Me
-              </Button>
+              </p>
+              <div className="flex justify-center">
+                <a href="#contact" aria-label="Navigate to contact section">
+                  <Button className="bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg transition-all">
+                    Contact Me
+                  </Button>
+                </a>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Portfolio Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-900 bg-gray-100">
+      <section
+        className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-900 bg-gray-100"
+        id="projects"
+      >
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -516,13 +642,16 @@ const Home = () => {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 className="group relative overflow-hidden rounded-lg sm:rounded-xl shadow-lg"
               >
                 <img
                   className="w-full h-60 sm:h-80 object-cover transition-transform duration-500 group-hover:scale-110"
                   src={item.imageLink}
-                  alt={item.title}
+                  alt={item.description || item.title}
+                  loading="lazy"
+                  width={800}
+                  height={450}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
                   <h3 className="text-white text-xl sm:text-2xl font-bold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
@@ -531,7 +660,12 @@ const Home = () => {
                   <p className="text-gray-300 text-sm sm:text-base mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
                     {item.description}
                   </p>
-                  <DialogWithImage />
+                  <DialogWithImage
+                    title={item.title}
+                    brief={item.brief}
+                    previewLink={item.previewLink}
+                    video={item.Video}
+                  />
                 </div>
               </motion.div>
             ))}
@@ -540,13 +674,16 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-800 bg-white">
+      <section
+        className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-800 bg-white"
+        id="testimonials"
+      >
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -564,16 +701,24 @@ const Home = () => {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 className="group"
               >
-                <Link to={testimonial.viewLink} target="_blank">
+                <a
+                  href={testimonial.viewLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View testimonial: ${testimonial.title}`}
+                >
                   <Card className="h-full dark:bg-gray-700/50 bg-white overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative h-40 sm:h-48 overflow-hidden">
                       <img
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         src={testimonial.imageLink}
                         alt={testimonial.title}
+                        loading="lazy"
+                        width={600}
+                        height={400}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 sm:p-6">
                         <h3 className="text-white text-lg sm:text-xl font-bold">
@@ -597,6 +742,7 @@ const Home = () => {
                           strokeWidth={2}
                           stroke="currentColor"
                           className="h-4 w-4"
+                          aria-hidden="true"
                         >
                           <path
                             strokeLinecap="round"
@@ -607,7 +753,7 @@ const Home = () => {
                       </Button>
                     </CardBody>
                   </Card>
-                </Link>
+                </a>
               </motion.div>
             ))}
           </div>
@@ -615,13 +761,16 @@ const Home = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-900 bg-gray-50">
+      <section
+        className="py-16 sm:py-20 px-4 sm:px-6 dark:bg-gray-900 bg-gray-50"
+        id="contact"
+      >
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-bold dark:text-white text-gray-900 mb-3 sm:mb-4">
@@ -637,13 +786,14 @@ const Home = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
           >
             <Card className="dark:bg-gray-800/50 bg-white/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
               <CardBody className="p-6 sm:p-8 md:p-12">
                 <form
                   onSubmit={handleSubmit}
                   className="space-y-4 sm:space-y-6"
+                  aria-label="Contact form"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <div>
@@ -662,6 +812,7 @@ const Home = () => {
                         required
                         className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                         placeholder="John Doe"
+                        aria-required="true"
                       />
                     </div>
 
@@ -681,6 +832,7 @@ const Home = () => {
                         required
                         className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                         placeholder="john@example.com"
+                        aria-required="true"
                       />
                     </div>
                   </div>
@@ -742,6 +894,7 @@ const Home = () => {
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                        aria-required="true"
                       >
                         <option value="">
                           What service are you interested in?
@@ -771,6 +924,7 @@ const Home = () => {
                       required
                       className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                       placeholder="Tell me about your project goals, requirements, and any specific needs you have..."
+                      aria-required="true"
                     />
                   </div>
 
@@ -780,7 +934,7 @@ const Home = () => {
                       className="w-full md:w-auto px-6 sm:px-8 py-2 sm:py-3 justify-center bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white font-medium rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base"
                     >
                       Send Message
-                      <TbSend className="text-lg sm:text-xl" />
+                      <Send className="text-lg sm:text-xl" aria-hidden="true" />
                     </Button>
                   </div>
                 </form>

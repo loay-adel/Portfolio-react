@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-[dir="rtl"] {
-  direction: rtl;
-  text-align: right;
+html {
+  scroll-behavior: smooth;
 }
