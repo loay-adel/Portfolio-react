@@ -9,7 +9,13 @@ import {
 } from "@material-tailwind/react";
 import { ExternalLink, X } from "lucide-react";
 
-export function DialogWithImage({ title, video, brief, previewLink }) {
+export function DialogWithImage({
+  title,
+  video,
+  brief,
+  previewLink,
+  imageLink,
+}) {
   const [open, setOpen] = React.useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
   const videoRef = React.useRef(null);
@@ -101,35 +107,52 @@ export function DialogWithImage({ title, video, brief, previewLink }) {
         {/* Optimized Video Container */}
         <DialogBody className="p-0 overflow-hidden bg-black">
           <div className="relative aspect-video w-full">
-            {!isVideoLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                <div className="animate-pulse text-gray-500">
-                  Loading video...
-                </div>
+            {video ? (
+              <>
+                {!isVideoLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                    <div className="animate-pulse text-gray-500">
+                      Loading video...
+                    </div>
+                  </div>
+                )}
+                <video
+                  ref={videoRef}
+                  className={`w-full h-full object-contain ${
+                    isVideoLoaded ? "block" : "hidden"
+                  }`}
+                  controls
+                  autoPlay
+                  muted
+                  playsInline
+                  preload="metadata"
+                  aria-label={`Video demonstration of ${title}`}
+                  onLoadedData={() => setIsVideoLoaded(true)}
+                >
+                  <source src={video} type="video/mp4" />
+                  <track
+                    src=""
+                    kind="captions"
+                    srcLang="en"
+                    label="English captions"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </>
+            ) : (
+              // Fallback if no video
+              <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                {previewLink ? (
+                  <img
+                    src={imageLink}
+                    alt={title}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <span className="text-white text-lg">No video available</span>
+                )}
               </div>
             )}
-            <video
-              ref={videoRef}
-              className={`w-full h-full object-contain ${
-                isVideoLoaded ? "block" : "hidden"
-              }`}
-              controls
-              autoPlay
-              muted
-              playsInline
-              preload="metadata"
-              aria-label={`Video demonstration of ${title}`}
-              onLoadedData={() => setIsVideoLoaded(true)}
-            >
-              <source src={video} type="video/mp4" />
-              <track
-                src=""
-                kind="captions"
-                srcLang="en"
-                label="English captions"
-              />
-              Your browser does not support the video tag.
-            </video>
           </div>
         </DialogBody>
       </Dialog>

@@ -84,6 +84,16 @@ const Home = () => {
         "Developed a modern, fast, and fully responsive personal website for showcasing a professional profile. The site includes a smooth animated UI, secure backend hosted on a VPS with SSL, and a CV builder tool that allows users to create and download ATS-friendly resumes directly from the site.",
     },
     {
+      imageLink: "booksum.webp",
+      title: "Book Summarizer",
+      description:
+        "AI-powered application that summarizes books and lets you search for physical copies on Amazon.",
+      previewLink: "https://booksummarizer.net/",
+      Video: false,
+      brief:
+        "A styled, Flask-hosted web app that uses AI to summarize books and search Amazon for purchasing options.",
+    },
+    {
       imageLink: "myfirst.webp",
       title: "E-commerce Platform",
       description:
@@ -133,6 +143,12 @@ const Home = () => {
       title: "clone landing page",
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1072699",
       quote: "cloned a landing page for the client ",
+    },
+    {
+      imageLink: "review5.webp",
+      title: "AI based web page",
+      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1080908",
+      quote: "styled flask webapp and hosted on vps  ",
     },
   ];
 
@@ -684,6 +700,7 @@ const Home = () => {
                     brief={item.brief}
                     previewLink={item.previewLink}
                     video={item.Video}
+                    imageLink={item.imageLink}
                   />
                 </div>
               </motion.div>
@@ -861,7 +878,7 @@ const Home = () => {
                       htmlFor="phone"
                       className="block text-sm sm:text-base font-medium dark:text-gray-300 text-gray-700 mb-1 sm:mb-2"
                     >
-                      Phone Number
+                      What's app Number
                     </label>
                     <input
                       type="tel"
