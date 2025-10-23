@@ -150,6 +150,21 @@ const Home = () => {
       viewLink: "https://khamsat.com/user/loay_adel1/reviews/1080908",
       quote: "styled flask webapp and hosted on vps  ",
     },
+    {
+      imageLink: "review6.webp",
+      title: "Gmail API Integration",
+      viewLink: "https://mostaql.com/u/loay_adel1/reviews/9165465",
+      quote:
+        "integrated Gmail API to fetch verification codes and improved system logic",
+    },
+
+    {
+      imageLink: "bad-review.webp",
+      title: "Styling of (Salla) Store",
+      viewLink: "https://mostaql.com/u/loay_adel1/reviews/8974960",
+      quote:
+        "worked on styling a Salla store; although the client had different preferences, the project was completed as requested.",
+    },
   ];
 
   // Form state
@@ -221,6 +236,7 @@ const Home = () => {
     }
   };
 
+  const yearsOfExperince = new Date();
   return (
     <div className="dark:bg-gray-900 bg-gray-50 min-h-screen overflow-x-hidden px-4 sm:px-6">
       {/* Hero Section */}
@@ -284,9 +300,15 @@ const Home = () => {
             className="flex flex-wrap justify-center gap-4 sm:gap-8"
           >
             {[
-              { value: "1+", label: "Years Experience" },
-              { value: "5+", label: "Projects Completed" },
-              { value: "100%", label: "Client Satisfaction" },
+              {
+                value: yearsOfExperince.getFullYear() - 2024,
+                label: "Years Experience",
+              },
+              {
+                value: `+${portfolioItems.length}`,
+                label: "Projects Completed",
+              },
+              { value: "90%", label: " Satisafied Clients " },
             ].map((item, index) => (
               <div key={index} className="flex flex-col items-center px-4 py-2">
                 <p className="text-2xl sm:text-3xl font-bold dark:text-primaryCyan-400 text-primaryCyan-500">
@@ -730,7 +752,7 @@ const Home = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
@@ -747,21 +769,28 @@ const Home = () => {
                   aria-label={`View testimonial: ${testimonial.title}`}
                 >
                   <Card className="h-full dark:bg-gray-700/50 bg-white overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative h-40 sm:h-48 overflow-hidden">
+                    {/* Image Section */}
+                    <div className="relative aspect-[1200/630] overflow-hidden">
                       <img
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         src={testimonial.imageLink}
                         alt={testimonial.title}
                         loading="lazy"
-                        width={600}
-                        height={400}
+                        width={1200}
+                        height={630}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 sm:p-6">
-                        <h3 className="text-white text-lg sm:text-xl font-bold">
+
+                      {/* Overlay appears only on hover */}
+                      <div
+                        className="absolute inset-0 flex items-end p-6 bg-gradient-to-t from-black/70 via-black/30 to-transparent 
+                                opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      >
+                        <h3 className="text-white text-xl font-bold">
                           {testimonial.title}
                         </h3>
                       </div>
                     </div>
+
                     <CardBody className="p-4 sm:p-6">
                       <p className="dark:text-gray-300 text-gray-600 text-sm sm:text-base mb-3 sm:mb-4 italic">
                         "{testimonial.quote}"

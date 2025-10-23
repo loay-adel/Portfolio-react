@@ -17,7 +17,6 @@ const Header = () => {
 
     window.addEventListener("resize", handleResize);
 
-    // Apply dark mode class to document
     if (darkMode) {
       document.documentElement.classList.add("dark");
       localStorage.theme = "dark";
