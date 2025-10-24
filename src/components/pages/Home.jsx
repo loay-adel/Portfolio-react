@@ -1,12 +1,12 @@
 import { Button, Card, CardBody, Typography } from "@material-tailwind/react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { DialogWithImage } from "./Dialog";
 import emailjs from "@emailjs/browser";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 
-// Import lucide-react icons
+// Import icons directly (no lazy loading)
 import {
   ArrowDown,
   Laptop,
@@ -31,141 +31,180 @@ import {
 } from "lucide-react";
 
 const Home = () => {
-  // Animation variants
-  const listVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
+  // Check if mobile for performance optimizations
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Optimized animation variants with mobile consideration
+  const listVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0 },
+      show: {
+        opacity: 1,
+        transition: {
+          staggerChildren: isMobile ? 0.05 : 0.15,
+          delayChildren: isMobile ? 0.1 : 0.3,
+        },
       },
-    },
-  };
+    }),
+    [isMobile]
+  );
 
-  const itemVariants = {
-    hidden: { x: -50, opacity: 0 },
-    show: { x: 0, opacity: 1 },
-  };
+  const itemVariants = useMemo(
+    () => ({
+      hidden: { x: isMobile ? -20 : -50, opacity: 0 },
+      show: { x: 0, opacity: 1 },
+    }),
+    [isMobile]
+  );
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
+  const fadeInUp = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: isMobile ? 10 : 20 },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          duration: isMobile ? 0.4 : 0.6,
+          ease: "easeOut",
+        },
+      },
+    }),
+    [isMobile]
+  );
+
   const [activeItem, setActiveItem] = useState(null);
-  // Portfolio data
-  const portfolioItems = [
-    {
-      imageLink: "Click.webp",
-      title: "Click Cart-Connect ",
-      description:
-        "Full-featured online store with cart and payment integration ",
-      previewLink: "https://final-project-five-ashy.vercel.app/",
-      Video: "Click-Cart Connect.mp4",
-      brief:
-        "A full e-commerce site built for a graduation project with cart, product listing, and admin functionalities. Data handled temporarily with JSON Server before moving to MongoDB.",
-    },
-    {
-      imageLink: "gioco.webp",
-      title: "GIOCO ",
-      description: "Digital Menu for Restaurant ",
-      previewLink: null,
-      Video: "Gioco.mp4",
-      brief:
-        "An interactive digital menu allowing customers to view items and place orders. Switched image upload to use image URLs instead of file uploads.",
-    },
-    {
-      imageLink: "ziad show.webp",
-      title: "Portofolio ",
-      description: "show case for MR ziad ",
-      previewLink: "https://ziadabdullah.com/",
-      Video: "Ziad Abdullah.mp4",
-      brief:
-        "Developed a modern, fast, and fully responsive personal website for showcasing a professional profile. The site includes a smooth animated UI, secure backend hosted on a VPS with SSL, and a CV builder tool that allows users to create and download ATS-friendly resumes directly from the site.",
-    },
-    {
-      imageLink: "booksum.webp",
-      title: "Book Summarizer",
-      description:
-        "AI-powered application that summarizes books and lets you search for physical copies on Amazon.",
-      previewLink: "https://booksummarizer.net/",
-      Video: false,
-      brief:
-        "A styled, Flask-hosted web app that uses AI to summarize books and search Amazon for purchasing options.",
-    },
-    {
-      imageLink: "myfirst.webp",
-      title: "E-commerce Platform",
-      description:
-        "Full-featured online store with cart and payment integration",
-      previewLink: "",
-      Video: "",
-      brief: "",
-    },
-    {
-      imageLink: "sec.webp",
-      title: "Dashboard UI",
-      description: "Analytics dashboard with interactive charts",
-    },
-    {
-      imageLink: "thrid.webp",
-      title: "Mobile App Design",
-      description: "Cross-platform mobile application",
-    },
-    {
-      imageLink: "fourth.webp",
-      title: "Portfolio Website",
-      description: "Custom portfolio showcasing creative work",
-    },
-  ];
 
-  const testimonials = [
-    {
-      imageLink: "review1.webp",
-      title: "Restaurant Menu Order System",
-      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1058777",
-      quote: " delivered exceptional work on our restaurant ordering system...",
-    },
-    {
-      imageLink: "review2.webp",
-      title: "Sales Funnel Optimization",
-      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1050528",
-      quote: "The funnel Loay built increased our conversion rate by 35%...",
-    },
-    {
-      imageLink: "review3.webp",
-      title: "Civil Engineer portofolio",
-      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1069345",
-      quote: "helped a Civil engineer to show his abillity on the network",
-    },
-    {
-      imageLink: "review4.webp",
-      title: "clone landing page",
-      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1072699",
-      quote: "cloned a landing page for the client ",
-    },
-    {
-      imageLink: "review5.webp",
-      title: "AI based web page",
-      viewLink: "https://khamsat.com/user/loay_adel1/reviews/1080908",
-      quote: "styled flask webapp and hosted on vps  ",
-    },
-    {
-      imageLink: "review6.webp",
-      title: "Gmail API Integration",
-      viewLink: "https://mostaql.com/u/loay_adel1/reviews/9165465",
-      quote:
-        "integrated Gmail API to fetch verification codes and improved system logic",
-    },
+  // Memoize portfolio data
+  const portfolioItems = useMemo(
+    () => [
+      {
+        imageLink: "Click.webp",
+        title: "Click Cart-Connect",
+        description:
+          "Full-featured online store with cart and payment integration",
+        previewLink: "https://final-project-five-ashy.vercel.app/",
+        Video: "Click-Cart Connect.mp4",
+        brief:
+          "A full e-commerce site built for a graduation project with cart, product listing, and admin functionalities.",
+      },
+      {
+        imageLink: "gioco.webp",
+        title: "GIOCO",
+        description: "Digital Menu for Restaurant",
+        previewLink: null,
+        Video: "Gioco.mp4",
+        brief:
+          "An interactive digital menu allowing customers to view items and place orders.",
+      },
+      {
+        imageLink: "ziad show.webp",
+        title: "Portfolio",
+        description: "Showcase for MR Ziad",
+        previewLink: "https://ziadabdullah.com/",
+        Video: "Ziad Abdullah.mp4",
+        brief:
+          "Developed a modern, fast, and fully responsive personal website for showcasing a professional profile.",
+      },
+      {
+        imageLink: "booksum.webp",
+        title: "Book Summarizer",
+        description:
+          "AI-powered application that summarizes books and lets you search for physical copies on Amazon.",
+        previewLink: "https://booksummarizer.net/",
+        Video: false,
+        brief:
+          "A styled, Flask-hosted web app that uses AI to summarize books and search Amazon for purchasing options.",
+      },
+      {
+        imageLink: "myfirst.webp",
+        title: "E-commerce Platform",
+        description:
+          "Full-featured online store with cart and payment integration",
+        previewLink: "",
+        Video: "",
+        brief: "",
+      },
+      {
+        imageLink: "sec.webp",
+        title: "Dashboard UI",
+        description: "Analytics dashboard with interactive charts",
+      },
+      {
+        imageLink: "thrid.webp",
+        title: "Mobile App Design",
+        description: "Cross-platform mobile application",
+      },
+      {
+        imageLink: "fourth.webp",
+        title: "Portfolio Website",
+        description: "Custom portfolio showcasing creative work",
+      },
+    ],
+    []
+  );
 
-    {
-      imageLink: "bad-review.webp",
-      title: "Styling of (Salla) Store",
-      viewLink: "https://mostaql.com/u/loay_adel1/reviews/8974960",
-      quote:
-        "worked on styling a Salla store; although the client had different preferences, the project was completed as requested.",
-    },
-  ];
+  // Memoize testimonials data
+  const testimonials = useMemo(
+    () => [
+      {
+        imageLink: "review1.webp",
+        title: "Restaurant Menu Order System",
+        viewLink: "https://khamsat.com/user/loay_adel1/reviews/1058777",
+        quote:
+          "Delivered exceptional work on our restaurant ordering system...",
+      },
+      {
+        imageLink: "review2.webp",
+        title: "Sales Funnel Optimization",
+        viewLink: "https://khamsat.com/user/loay_adel1/reviews/1050528",
+        quote: "The funnel Loay built increased our conversion rate by 35%...",
+      },
+      {
+        imageLink: "review3.webp",
+        title: "Civil Engineer Portfolio",
+        viewLink: "https://khamsat.com/user/loay_adel1/reviews/1069345",
+        quote: "Helped a Civil engineer to show his ability on the network",
+      },
+      {
+        imageLink: "review4.webp",
+        title: "Clone Landing Page",
+        viewLink: "https://khamsat.com/user/loay_adel1/reviews/1072699",
+        quote: "Cloned a landing page for the client",
+      },
+      {
+        imageLink: "review5.webp",
+        title: "AI Based Web Page",
+        viewLink: "https://khamsat.com/user/loay_adel1/reviews/1080908",
+        quote: "Styled flask webapp and hosted on VPS",
+      },
+      {
+        imageLink: "review6.webp",
+        title: "Gmail API Integration",
+        viewLink: "https://mostaql.com/u/loay_adel1/reviews/9165465",
+        quote:
+          "Integrated Gmail API to fetch verification codes and improved system logic",
+      },
+      {
+        imageLink: "bad-review.webp",
+        title: "Styling of (Salla) Store",
+        viewLink: "https://mostaql.com/u/loay_adel1/reviews/8974960",
+        quote:
+          "Worked on styling a Salla store; although the client had different preferences, the project was completed as requested.",
+      },
+    ],
+    []
+  );
 
   // Form state
   const [formData, setFormData] = useState({
@@ -177,66 +216,280 @@ const Home = () => {
     details: "",
   });
 
-  const services = [
-    "Custom React Web Development",
-    "Full E-Commerce Store Setup",
-    "Responsive UI/UX Implementation",
-    "Website Performance Optimization",
-    "Freelance Budget & Earnings Consultation",
-    "Other",
-  ];
+  const services = useMemo(
+    () => [
+      "Custom React Web Development",
+      "Full E-Commerce Store Setup",
+      "Responsive UI/UX Implementation",
+      "Website Performance Optimization",
+      "Freelance Budget & Earnings Consultation",
+      "Other",
+    ],
+    []
+  );
 
-  const handleChange = (e) => {
+  // Form handler
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  function getFormattedTime() {
+  // Memoized time formatter
+  const getFormattedTime = useCallback(() => {
     const now = new Date();
     return now.toLocaleString("en-US", {
       dateStyle: "long",
       timeStyle: "short",
     });
-  }
-  const notyf = new Notyf();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formattedTime = getFormattedTime();
+  // Notyf instance with memoization
+  const notyf = useMemo(() => new Notyf(), []);
 
-    const templateParams = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      service: formData.service,
-      timeline: formData.timeline,
-      details: formData.details,
-      time: formattedTime,
-    };
-    console.log(templateParams);
+  // Form submission
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const formattedTime = getFormattedTime();
 
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_Service_ID,
-        import.meta.env.VITE_Template_ID,
-        templateParams,
-        import.meta.env.VITE_Public_KEY
-      );
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        timeline: "",
-        service: "",
-        details: "",
-      });
-      notyf.success("Email sent successfully!");
-    } catch (error) {
-      notyf.error(`Error email didn't send ${error}`);
-    }
-  };
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        timeline: formData.timeline,
+        details: formData.details,
+        time: formattedTime,
+      };
 
-  const yearsOfExperince = new Date();
+      try {
+        await emailjs.send(
+          import.meta.env.VITE_Service_ID,
+          import.meta.env.VITE_Template_ID,
+          templateParams,
+          import.meta.env.VITE_Public_KEY
+        );
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          timeline: "",
+          service: "",
+          details: "",
+        });
+
+        notyf.success("Email sent successfully!");
+      } catch (error) {
+        console.error("Email sending failed:", error);
+        notyf.error("Failed to send email. Please try again.");
+      }
+    },
+    [formData, getFormattedTime, notyf]
+  );
+
+  // Memoized stats data
+  const statsData = useMemo(
+    () => [
+      {
+        value: new Date().getFullYear() - 2024,
+        label: "Years Experience",
+      },
+      {
+        value: `+${portfolioItems.length}`,
+        label: "Projects Completed",
+      },
+      {
+        value: "90%",
+        label: "Satisfied Clients",
+      },
+    ],
+    [portfolioItems.length]
+  );
+
+  // Portfolio event handlers
+  const handleMouseEnter = useCallback((index) => {
+    setActiveItem(index);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setActiveItem(null);
+  }, []);
+
+  const handlePortfolioClick = useCallback((index) => {
+    setActiveItem(index);
+  }, []);
+
+  // Services data
+  const servicesData = useMemo(
+    () => [
+      {
+        icon: (
+          <Laptop
+            className="text-3xl sm:text-4xl text-primaryCyan-700 dark:text-primaryCyan-400"
+            aria-hidden="true"
+          />
+        ),
+        title: "Frontend Development",
+        description:
+          "Building responsive and modern UIs using React, Tailwind, and modern frontend tools.",
+      },
+      {
+        icon: (
+          <Server
+            className="text-3xl sm:text-4xl text-primaryCyan-700 dark:text-primaryCyan-400"
+            aria-hidden="true"
+          />
+        ),
+        title: "Backend Development",
+        description:
+          "RESTful APIs with Node.js and Express, ensuring secure and efficient server-side logic.",
+      },
+      {
+        icon: (
+          <Database
+            className="text-3xl sm:text-4xl text-primaryCyan-700 dark:text-primaryCyan-400"
+            aria-hidden="true"
+          />
+        ),
+        title: "Database Solutions",
+        description:
+          "Schema design and data handling using MongoDB and efficient query structures.",
+      },
+      {
+        icon: (
+          <ArrowBigUp
+            className="text-3xl sm:text-4xl text-primaryCyan-700 dark:text-primaryCyan-400"
+            aria-hidden="true"
+          />
+        ),
+        title: "API Integration",
+        description:
+          "Seamless integration of third-party APIs for payments, authentication, and more.",
+      },
+      {
+        icon: (
+          <div className="flex gap-1">
+            <Smartphone className="text-xl sm:text-2xl text-primaryCyan-700 dark:text-primaryCyan-400" />
+            <Monitor className="text-xl sm:text-2xl text-primaryCyan-700 dark:text-primaryCyan-400" />
+          </div>
+        ),
+        title: "Responsive Design",
+        description:
+          "Mobile-first responsive designs that work perfectly across all devices.",
+      },
+      {
+        icon: (
+          <GitBranch
+            className="text-3xl sm:text-4xl text-primaryCyan-700 dark:text-primaryCyan-400"
+            aria-hidden="true"
+          />
+        ),
+        title: "Version Control",
+        description:
+          "Professional Git workflow implementation for efficient team collaboration.",
+      },
+    ],
+    []
+  );
+
+  // Skills data
+  const skillsData = useMemo(
+    () => [
+      {
+        icon: <FileCode2 aria-hidden="true" />,
+        name: "HTML5",
+        color: "text-orange-500",
+      },
+      {
+        icon: <FileCode2 aria-hidden="true" />,
+        name: "CSS3",
+        color: "text-blue-500",
+      },
+      {
+        icon: <FileJson aria-hidden="true" />,
+        name: "JavaScript",
+        color: "text-yellow-400",
+      },
+      {
+        icon: <FileText aria-hidden="true" />,
+        name: "TypeScript",
+        color: "text-blue-600",
+      },
+      {
+        icon: <Atom aria-hidden="true" />,
+        name: "React",
+        color: "text-cyan-500",
+      },
+      {
+        icon: <Layers aria-hidden="true" />,
+        name: "Next.js",
+        color: "text-black dark:text-white",
+      },
+      {
+        icon: <Repeat aria-hidden="true" />,
+        name: "Redux",
+        color: "text-purple-500",
+      },
+      {
+        icon: <Palette aria-hidden="true" />,
+        name: "Tailwind",
+        color: "text-sky-400",
+      },
+      {
+        icon: <LayoutGrid aria-hidden="true" />,
+        name: "Bootstrap",
+        color: "text-purple-600",
+      },
+      {
+        icon: <Server aria-hidden="true" />,
+        name: "Node.js",
+        color: "text-green-600",
+      },
+      {
+        icon: <Database aria-hidden="true" />,
+        name: "MongoDB",
+        color: "text-green-500",
+      },
+      {
+        icon: <Database aria-hidden="true" />,
+        name: "MySQL",
+        color: "text-blue-400",
+      },
+      {
+        icon: <GitBranch aria-hidden="true" />,
+        name: "Git",
+        color: "text-orange-600",
+      },
+      {
+        icon: <Github aria-hidden="true" />,
+        name: "GitHub",
+        color: "text-gray-800 dark:text-white",
+      },
+      {
+        icon: <Package aria-hidden="true" />,
+        name: "Docker",
+        color: "text-blue-700",
+      },
+      {
+        icon: <Send aria-hidden="true" />,
+        name: "Postman",
+        color: "text-orange-500",
+      },
+      {
+        icon: <Search aria-hidden="true" />,
+        name: "SEO",
+        color: "text-pink-500",
+      },
+      {
+        icon: <ArrowBigUp aria-hidden="true" />,
+        name: "REST API",
+        color: "text-indigo-500",
+      },
+    ],
+    []
+  );
+
   return (
     <div className="dark:bg-gray-900 bg-gray-50 min-h-screen overflow-x-hidden px-4 sm:px-6">
       {/* Hero Section */}
@@ -249,7 +502,7 @@ const Home = () => {
             className="text-4xl sm:text-5xl md:text-6xl font-bold dark:text-white text-gray-900 mb-4 sm:mb-6"
           >
             Hi, I'm{" "}
-            <span className="text-primaryCyan-500 dark:text-primaryCyan-400">
+            <span className="text-primaryCyan-700 dark:text-primaryCyan-400">
               Loay Adel
             </span>
           </motion.h1>
@@ -259,7 +512,7 @@ const Home = () => {
             initial="hidden"
             animate="show"
             transition={{ delay: 0.2 }}
-            className="text-lg sm:text-xl md:text-2xl dark:text-primaryCyan-300 text-primaryCyan-500 mb-8 sm:mb-10 max-w-2xl mx-auto"
+            className="text-lg sm:text-xl md:text-2xl dark:text-primaryCyan-400 text-primaryCyan-700 mb-8 sm:mb-10 max-w-2xl mx-auto font-semibold"
           >
             React Frontend Developer | MERN Stack Specialist
           </motion.p>
@@ -272,8 +525,8 @@ const Home = () => {
             className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 sm:mb-16"
           >
             <a href="#contact" aria-label="Navigate to contact section">
-              <Button className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white rounded-lg shadow-lg transition-all hover:shadow-xl">
-                Collaborate With Me
+              <Button className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg bg-primaryCyan-700 hover:bg-primaryCyan-800 text-white rounded-lg shadow-lg transition-all hover:shadow-xl min-h-[44px] flex items-center justify-center">
+                COLLABORATE WITH ME
               </Button>
             </a>
             <a
@@ -284,7 +537,7 @@ const Home = () => {
             >
               <Button
                 variant="outlined"
-                className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg border-2 dark:border-gray-600 border-gray-300 dark:text-white text-gray-800 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 rounded-lg flex items-center gap-2 transition-all"
+                className="px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white dark:border-gray-300 dark:text-gray-300 dark:hover:bg-gray-300 dark:hover:text-gray-900 rounded-lg flex items-center gap-2 transition-all min-h-[44px] justify-center font-semibold"
               >
                 Download CV
                 <ArrowDown className="text-lg" aria-hidden="true" />
@@ -299,22 +552,12 @@ const Home = () => {
             transition={{ delay: 0.6 }}
             className="flex flex-wrap justify-center gap-4 sm:gap-8"
           >
-            {[
-              {
-                value: yearsOfExperince.getFullYear() - 2024,
-                label: "Years Experience",
-              },
-              {
-                value: `+${portfolioItems.length}`,
-                label: "Projects Completed",
-              },
-              { value: "90%", label: " Satisafied Clients " },
-            ].map((item, index) => (
+            {statsData.map((item, index) => (
               <div key={index} className="flex flex-col items-center px-4 py-2">
-                <p className="text-2xl sm:text-3xl font-bold dark:text-primaryCyan-400 text-primaryCyan-500">
+                <p className="text-2xl sm:text-3xl font-bold dark:text-primaryCyan-400 text-primaryCyan-700">
                   {item.value}
                 </p>
-                <p className="text-sm sm:text-base dark:text-gray-400 text-gray-600">
+                <p className="text-sm sm:text-base dark:text-gray-300 text-gray-700 font-medium">
                   {item.label}
                 </p>
               </div>
@@ -342,74 +585,7 @@ const Home = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {[
-              {
-                icon: (
-                  <Laptop
-                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
-                    aria-hidden="true"
-                  />
-                ),
-                title: "Frontend Development",
-                description:
-                  "Building responsive and modern UIs using React, Tailwind, and modern frontend tools.",
-              },
-              {
-                icon: (
-                  <Server
-                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
-                    aria-hidden="true"
-                  />
-                ),
-                title: "Backend Development",
-                description:
-                  "RESTful APIs with Node.js and Express, ensuring secure and efficient server-side logic.",
-              },
-              {
-                icon: (
-                  <Database
-                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
-                    aria-hidden="true"
-                  />
-                ),
-                title: "Database Solutions",
-                description:
-                  "Schema design and data handling using MongoDB and efficient query structures.",
-              },
-              {
-                icon: (
-                  <ArrowBigUp
-                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
-                    aria-hidden="true"
-                  />
-                ),
-                title: "API Integration",
-                description:
-                  "Seamless integration of third-party APIs for payments, authentication, and more.",
-              },
-              {
-                icon: (
-                  <div className="flex gap-1">
-                    <Smartphone className="text-xl sm:text-2xl text-primaryCyan-500 dark:text-primaryCyan-400" />
-                    <Monitor className="text-xl sm:text-2xl text-primaryCyan-500 dark:text-primaryCyan-400" />
-                  </div>
-                ),
-                title: "Responsive Design",
-                description:
-                  "Mobile-first responsive designs that work perfectly across all devices.",
-              },
-              {
-                icon: (
-                  <GitBranch
-                    className="text-3xl sm:text-4xl text-primaryCyan-500 dark:text-primaryCyan-400"
-                    aria-hidden="true"
-                  />
-                ),
-                title: "Version Control",
-                description:
-                  "Professional Git workflow implementation for efficient team collaboration.",
-              },
-            ].map((service, index) => (
+            {servicesData.map((service, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 60 }}
@@ -464,98 +640,7 @@ const Home = () => {
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"
           >
-            {[
-              {
-                icon: <FileCode2 aria-hidden="true" />,
-                name: "HTML5",
-                color: "text-orange-500",
-              },
-              {
-                icon: <FileCode2 aria-hidden="true" />,
-                name: "CSS3",
-                color: "text-blue-500",
-              },
-              {
-                icon: <FileJson aria-hidden="true" />,
-                name: "JavaScript",
-                color: "text-yellow-400",
-              },
-              {
-                icon: <FileText aria-hidden="true" />,
-                name: "TypeScript",
-                color: "text-blue-600",
-              },
-              {
-                icon: <Atom aria-hidden="true" />,
-                name: "React",
-                color: "text-cyan-500",
-              },
-              {
-                icon: <Layers aria-hidden="true" />,
-                name: "Next.js",
-                color: "text-black dark:text-white",
-              },
-              {
-                icon: <Repeat aria-hidden="true" />,
-                name: "Redux",
-                color: "text-purple-500",
-              },
-              {
-                icon: <Palette aria-hidden="true" />,
-                name: "Tailwind",
-                color: "text-sky-400",
-              },
-              {
-                icon: <LayoutGrid aria-hidden="true" />,
-                name: "Bootstrap",
-                color: "text-purple-600",
-              },
-              {
-                icon: <Server aria-hidden="true" />,
-                name: "Node.js",
-                color: "text-green-600",
-              },
-              {
-                icon: <Database aria-hidden="true" />,
-                name: "MongoDB",
-                color: "text-green-500",
-              },
-              {
-                icon: <Database aria-hidden="true" />,
-                name: "MySQL",
-                color: "text-blue-400",
-              },
-              {
-                icon: <GitBranch aria-hidden="true" />,
-                name: "Git",
-                color: "text-orange-600",
-              },
-              {
-                icon: <Github aria-hidden="true" />,
-                name: "GitHub",
-                color: "text-gray-800 dark:text-white",
-              },
-              {
-                icon: <Package aria-hidden="true" />,
-                name: "Docker",
-                color: "text-blue-700",
-              },
-              {
-                icon: <Send aria-hidden="true" />,
-                name: "Postman",
-                color: "text-orange-500",
-              },
-              {
-                icon: <Search aria-hidden="true" />,
-                name: "SEO",
-                color: "text-pink-500",
-              },
-              {
-                icon: <ArrowBigUp aria-hidden="true" />,
-                name: "REST API",
-                color: "text-indigo-500",
-              },
-            ].map((skill, index) => (
+            {skillsData.map((skill, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
@@ -568,7 +653,7 @@ const Home = () => {
                 >
                   {skill.icon}
                 </div>
-                <span className="text-xs sm:text-sm font-medium dark:text-gray-300 text-gray-700">
+                <span className="text-xs sm:text-sm font-medium dark:text-gray-300 text-gray-700 text-center">
                   {skill.name}
                 </span>
               </motion.div>
@@ -606,7 +691,7 @@ const Home = () => {
               <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full bg-primaryCyan-500/20 dark:bg-primaryCyan-400/20 flex items-center justify-center">
                 <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-primaryCyan-500/30 dark:bg-primaryCyan-400/30 flex items-center justify-center">
                   <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-primaryCyan-500/40 dark:bg-primaryCyan-400/40 flex items-center justify-center">
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-primaryCyan-500 dark:bg-primaryCyan-400 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-primaryCyan-700 dark:bg-primaryCyan-400 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
                       Loay A.
                     </div>
                   </div>
@@ -641,7 +726,7 @@ const Home = () => {
               </p>
               <div className="flex justify-center">
                 <a href="#contact" aria-label="Navigate to contact section">
-                  <Button className="bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg transition-all">
+                  <Button className="bg-primaryCyan-700 hover:bg-primaryCyan-800 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg transition-all min-h-[44px]">
                     Contact Me
                   </Button>
                 </a>
@@ -680,9 +765,9 @@ const Home = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 className="group relative overflow-hidden rounded-lg sm:rounded-xl shadow-lg cursor-pointer"
-                onClick={() => setActiveItem(index)}
-                onMouseEnter={() => setActiveItem(index)}
-                onMouseLeave={() => setActiveItem(null)}
+                onClick={() => handlePortfolioClick(index)}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
               >
                 <img
                   className="w-full h-60 sm:h-80 object-cover transition-all duration-500"
@@ -769,7 +854,6 @@ const Home = () => {
                   aria-label={`View testimonial: ${testimonial.title}`}
                 >
                   <Card className="h-full dark:bg-gray-700/50 bg-white overflow-hidden hover:shadow-lg transition-shadow">
-                    {/* Image Section */}
                     <div className="relative aspect-[1200/630] overflow-hidden">
                       <img
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -779,12 +863,7 @@ const Home = () => {
                         width={1200}
                         height={630}
                       />
-
-                      {/* Overlay appears only on hover */}
-                      <div
-                        className="absolute inset-0 flex items-end p-6 bg-gradient-to-t from-black/70 via-black/30 to-transparent 
-                                opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      >
+                      <div className="absolute inset-0 flex items-end p-6 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         <h3 className="text-white text-xl font-bold">
                           {testimonial.title}
                         </h3>
@@ -797,7 +876,7 @@ const Home = () => {
                       </p>
                       <Button
                         variant="text"
-                        className="flex items-center gap-2 dark:text-primaryCyan-400 text-primaryCyan-500 p-0 hover:bg-transparent text-sm sm:text-base"
+                        className="flex items-center gap-2 dark:text-primaryCyan-400 text-primaryCyan-700 p-0 hover:bg-transparent text-sm sm:text-base font-medium"
                       >
                         View full review
                         <svg
@@ -875,7 +954,7 @@ const Home = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                         placeholder="John Doe"
                         aria-required="true"
                       />
@@ -895,7 +974,7 @@ const Home = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                         placeholder="john@example.com"
                         aria-required="true"
                       />
@@ -907,7 +986,7 @@ const Home = () => {
                       htmlFor="phone"
                       className="block text-sm sm:text-base font-medium dark:text-gray-300 text-gray-700 mb-1 sm:mb-2"
                     >
-                      What's app Number
+                      WhatsApp Number
                     </label>
                     <input
                       type="tel"
@@ -915,7 +994,7 @@ const Home = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                      className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
@@ -933,7 +1012,7 @@ const Home = () => {
                         name="timeline"
                         value={formData.timeline}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                       >
                         <option value="">
                           When do you need this completed?
@@ -958,7 +1037,7 @@ const Home = () => {
                         value={formData.service}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                        className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                         aria-required="true"
                       >
                         <option value="">
@@ -987,7 +1066,7 @@ const Home = () => {
                       value={formData.details}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
+                      className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primaryCyan-700 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all text-sm sm:text-base"
                       placeholder="Tell me about your project goals, requirements, and any specific needs you have..."
                       aria-required="true"
                     />
@@ -996,10 +1075,10 @@ const Home = () => {
                   <div className="pt-2 sm:pt-4 flex justify-center">
                     <Button
                       type="submit"
-                      className="w-full md:w-auto px-6 sm:px-8 py-2 sm:py-3 justify-center bg-primaryCyan-500 hover:bg-primaryCyan-600 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white font-medium rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base"
+                      className="w-full md:w-auto px-8 py-4 justify-center bg-primaryCyan-700 hover:bg-primaryCyan-800 dark:bg-primaryCyan-600 dark:hover:bg-primaryCyan-700 text-white font-medium rounded-lg shadow-lg transition-all min-h-[48px] flex items-center gap-2 text-base"
                     >
                       Send Message
-                      <Send className="text-lg sm:text-xl" aria-hidden="true" />
+                      <Send className="text-xl" aria-hidden="true" />
                     </Button>
                   </div>
                 </form>

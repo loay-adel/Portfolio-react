@@ -25,28 +25,25 @@ module.exports = withMT({
       colors: {
         // Modern Cyan Palette
         primaryCyan: {
-          100: "#E0F7FA", // Lightest cyan (backgrounds)
-          300: "#4DD0E1", // Light cyan (secondary elements)
-          500: "#00BCD4", // Primary cyan (buttons, accents)
-          700: "#0097A7", // Dark cyan (headers)
-          900: "#006064", // Darkest cyan (footers, dark mode accents)
+          100: "#E0F7FA",
+          300: "#26C6DA",
+          500: "#00ACC1",
+          700: "#00838F",
+          900: "#006064",
         },
         buttonPrimary: {
           100: "#EDE7F6",
-          500: "#673AB7", // main color
-          700: "#4527A0", // hover
+          500: "#673AB7",
+          700: "#4527A0",
         },
-        // Supporting Colors
-        primaryElectric: "#00E5FF", // Electric cyan (highlights, hover states)
-        primaryNavy: "#03045E", // Deep navy (text, dark backgrounds)
-        // Functional Colors
-        success: "#2ECC71", // Green (success states)
-        error: "#E74C3C", // Red (errors)
-        warning: "#FFC107", // Amber (warnings - softer than yellow)
-        // Neutrals
+        primaryElectric: "#00E5FF",
+        primaryNavy: "#03045E",
+        success: "#2ECC71",
+        error: "#E74C3C",
+        warning: "#FFC107",
         primaryText: "#333333",
-        primaryBackground: "#F8F9FA", // Off-white
-        primaryBorder: "#B2EBF2", // Light cyan border
+        primaryBackground: "#F8F9FA",
+        primaryBorder: "#B2EBF2",
       },
       fontFamily: {
         mainFont: ["Poppins", "sans-serif"],

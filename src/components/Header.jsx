@@ -1,76 +1,104 @@
 import { Navbar, Collapse, IconButton } from "@material-tailwind/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Menu, X, Moon, Sun } from "lucide-react";
 
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-  );
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Use useCallback to prevent unnecessary re-renders
+  const handleResize = useCallback(() => {
+    if (window.innerWidth >= 960) {
+      setOpenNav(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 960) setOpenNav(false);
+    // Set initial theme without causing reflow
+    const isDark =
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    setDarkMode(isDark);
+
+    // Debounced resize handler
+    let resizeTimeout;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(handleResize, 100);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", debouncedResize);
 
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-    }
+    return () => {
+      window.removeEventListener("resize", debouncedResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [handleResize]);
 
-    return () => window.removeEventListener("resize", handleResize);
+  useEffect(() => {
+    // Batch DOM updates
+    const updateTheme = () => {
+      if (darkMode) {
+        document.documentElement.classList.add("dark");
+        localStorage.theme = "dark";
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.theme = "light";
+      }
+    };
+
+    // Use requestAnimationFrame to batch style changes
+    requestAnimationFrame(updateTheme);
   }, [darkMode]);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode((prev) => !prev);
+  }, []);
 
-  const navList = (
-    <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <li>
-        <a
-          href="/"
-          className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
-          aria-label="Navigate to home section"
-        >
-          Home
-        </a>
-      </li>
-      <li>
-        <a
-          href="#projects"
-          className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
-          aria-label="Navigate to projects section"
-        >
-          Projects
-        </a>
-      </li>
-      <li>
-        <a
-          href="#testimonials"
-          className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
-          aria-label="Navigate to testimonials section"
-        >
-          Testimonials
-        </a>
-      </li>
-      <li>
-        <a
-          href="#contact"
-          className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
-          aria-label="Navigate to contact section"
-        >
-          Contact
-        </a>
-      </li>
-    </ul>
+  const navList = useMemo(
+    () => (
+      <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+        <li>
+          <a
+            href="/"
+            className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
+            aria-label="Navigate to home section"
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="#projects"
+            className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
+            aria-label="Navigate to projects section"
+          >
+            Projects
+          </a>
+        </li>
+        <li>
+          <a
+            href="#testimonials"
+            className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
+            aria-label="Navigate to testimonials section"
+          >
+            Testimonials
+          </a>
+        </li>
+        <li>
+          <a
+            href="#contact"
+            className="p-1 font-medium text-blue-gray-900 dark:text-white focus:outline-none  hover:text-primaryCyan-500 rounded transition-colors"
+            aria-label="Navigate to contact section"
+          >
+            Contact
+          </a>
+        </li>
+      </ul>
+    ),
+    []
   );
 
   return (
